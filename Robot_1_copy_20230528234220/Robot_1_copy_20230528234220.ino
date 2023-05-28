@@ -35,6 +35,8 @@ SensorBar mySensorBar(SX1509_ADDRESS);
 #define GO_FORWARD 2
 #define GO_LEFT 3
 #define GO_RIGHT 4
+#define GO_LEFT_2 5
+#define GO_RIGHT_2 6
 
 //STUFF FROM ARDUMOTO SETUP
 // Depending on how you wired your motors, you may need to swap.
@@ -103,13 +105,21 @@ void loop() {
     if( mySensorBar.getDensity() > 0 )
     {
       nextState = GO_FORWARD;
-      if( mySensorBar.getPosition() < -50 )
+      if( mySensorBar.getPosition() < -50 && mySensorBar.getPosition()> -111)
       {
         nextState = GO_LEFT;
       }
-      if( mySensorBar.getPosition() > 50 )
+      if( mySensorBar.getPosition() < -111)
+      {
+        nextState = GO_LEFT_2;
+      }
+      if( mySensorBar.getPosition() > 50 && mySensorBar.getPosition() < 111 )
       {
         nextState = GO_RIGHT;
+      }
+      if( mySensorBar.getPosition() > 111 )
+      {
+        nextState = GO_RIGHT_2;
       }
     }
     else
@@ -118,18 +128,29 @@ void loop() {
     }
     break;
   case GO_FORWARD:
-    driveArdumoto(MOTOR_L, FORWARD, 150);  // Motor A at max speed.
-    driveArdumoto(MOTOR_R, FORWARD, 150);  // Motor B at max speed.
+    driveArdumoto(MOTOR_L, FORWARD, 255);  // Motor A at max speed.
+    driveArdumoto(MOTOR_R, FORWARD, 255);  // Motor B at max speed.
     nextState = READ_LINE;
     break;
   case GO_LEFT:
     driveArdumoto(MOTOR_L, FORWARD, 0);  // Motor A at max speed.
-    driveArdumoto(MOTOR_R, FORWARD, 150);  // Motor B at max speed.
+    driveArdumoto(MOTOR_R, FORWARD, 255);  // Motor B at max speed.
+    nextState = READ_LINE;
+    break;
+  case GO_LEFT_2:
+    driveArdumoto(MOTOR_L, REVERSE, 255);  // Motor A at max speed.
+    driveArdumoto(MOTOR_R, FORWARD, 255);  // Motor B at max speed.
     nextState = READ_LINE;
     break;
   case GO_RIGHT:
     driveArdumoto(MOTOR_R, FORWARD, 0);  // Motor B at max speed.
-    driveArdumoto(MOTOR_L, FORWARD, 150);  // Motor A at max speed.
+    driveArdumoto(MOTOR_L, FORWARD, 255);  // Motor A at max speed.
+    
+    nextState = READ_LINE;
+    break;
+  case GO_RIGHT_2:
+    driveArdumoto(MOTOR_R, REVERSE, 255);  // Motor B at max speed.
+    driveArdumoto(MOTOR_L, FORWARD, 255);  // Motor A at max speed.
     
     nextState = READ_LINE;
     break;
