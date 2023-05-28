@@ -100,16 +100,16 @@ void loop() {
     //  nextState = IDLE_STATE;
     //   break;
     //}
-    if( mySensorBar.getDensity() < 7 )
+    if( mySensorBar.getDensity() > 0 )
     {
       nextState = GO_FORWARD;
       if( mySensorBar.getPosition() < -50 )
       {
-        nextState = GO_RIGHT;
+        nextState = GO_LEFT;
       }
       if( mySensorBar.getPosition() > 50 )
       {
-        nextState = GO_LEFT;
+        nextState = GO_RIGHT;
       }
     }
     else
