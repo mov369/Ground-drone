@@ -18,6 +18,7 @@
 
 #include "Wire.h"              // for I2C
 #include "sensorbar.h"         // needs SparkFun library
+#include <HCSR04.h>
 
 // Uncomment one of the four lines to match your SX1509's address
 //  pin selects. SX1509 breakout defaults to [0:0] (0x3E).
@@ -27,6 +28,7 @@ const uint8_t SX1509_ADDRESS = 0x3E;  // SX1509 I2C address (00)
 //const byte SX1509_ADDRESS = 0x71;  // SX1509 I2C address (11)
 
 SensorBar mySensorBar(SX1509_ADDRESS);
+UltraSonicDistanceSensor distanceSensor(13, 12);  // Initialize sensor that uses digital pins 13 and 12.
 
 // based on SparkFun MostBasicFollower code
 // Define the states that the decision making machines uses:
@@ -52,6 +54,7 @@ SensorBar mySensorBar(SX1509_ADDRESS);
 #define PWML 3  // PWM control (speed) for motor A // was int Lmotor = 5;
 #define DIRR 4 // Direction control for motor B // was int Rdir = 7;
 #define PWMR 11 // PWM control (speed) for motor B // was int Rmotor = 6;
+
 
 uint8_t state;
 
@@ -88,7 +91,9 @@ void setup()
 }
 
 void loop() {
- /*Get the data from the sensor bar and load it into the class members
+   
+    delay(500);
+  //Get the data from the sensor bar and load it into the class members
   uint8_t rawValue = mySensorBar.getRaw();
   
   //Print the binary value to the serial buffer.
@@ -114,9 +119,9 @@ void loop() {
   Serial.print("Density, bits detected (of 8): ");
   Serial.println(mySensorBar.getDensity());
   Serial.println("");
-  delay(300);
+  delay(500);
   //Wait 2/3 of a second
- */
+ 
 
 
   uint8_t nextState = state;
