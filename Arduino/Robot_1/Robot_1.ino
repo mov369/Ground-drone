@@ -20,6 +20,10 @@
 #include "sensorbar.h"         // needs SparkFun library
 #include <HCSR04.h>
 
+const byte triggerPin = 13;
+const byte echoPin = 12;
+UltraSonicDistanceSensor distanceSensor(triggerPin, echoPin);
+
 // Uncomment one of the four lines to match your SX1509's address
 //  pin selects. SX1509 breakout defaults to [0:0] (0x3E).
 const uint8_t SX1509_ADDRESS = 0x3E;  // SX1509 I2C address (00)
@@ -28,7 +32,7 @@ const uint8_t SX1509_ADDRESS = 0x3E;  // SX1509 I2C address (00)
 //const byte SX1509_ADDRESS = 0x71;  // SX1509 I2C address (11)
 
 SensorBar mySensorBar(SX1509_ADDRESS);
-UltraSonicDistanceSensor distanceSensor(13, 12);  // Initialize sensor that uses digital pins 13 and 12.
+
 
 // based on SparkFun MostBasicFollower code
 // Define the states that the decision making machines uses:
@@ -56,10 +60,12 @@ UltraSonicDistanceSensor distanceSensor(13, 12);  // Initialize sensor that uses
 #define PWMR 11 // PWM control (speed) for motor B // was int Rmotor = 6;
 
 
+
 uint8_t state;
 
 void setup() 
 {
+  setupArdumoto();
   Serial.begin(9600);  // start serial for output
   Serial.println("Program started.");
   Serial.println();
@@ -86,7 +92,7 @@ void setup()
 	  Serial.println("sx1509 IC communication FAILED!");
   }
   Serial.println();
-  setupArdumoto(); //Set all pins as outputs and intialise as LOW 
+  
   mySensorBar.begin();
 }
 
@@ -120,7 +126,7 @@ void loop() {
   Serial.println("");
   delay(500);
   */
- 
+  float distance = distanceSensor.measureDistanceCm();
   uint8_t nextState = state;
   switch (state) {
   case IDLE_STATE:
@@ -134,7 +140,7 @@ void loop() {
     //  nextState = IDLE_STATE;
     //   break;
     //}
-    if( mySensorBar.getDensity() > 0 )
+    if( mySensorBar.getDensity() > 0 && distance > 10 )
     {
       nextState = GO_FORWARD;
       if( mySensorBar.getPosition() < -50 && mySensorBar.getPosition()> -97)
@@ -159,30 +165,32 @@ void loop() {
       nextState = IDLE_STATE;
     }
     break;
+
+
   case GO_FORWARD:
-    driveArdumoto(MOTOR_L, FORWARD, 200);  // Motor A at max speed.
-    driveArdumoto(MOTOR_R, FORWARD, 200);  // Motor B at max speed.
+    driveArdumoto(MOTOR_L, FORWARD, 120);  // Motor A at max speed.
+    driveArdumoto(MOTOR_R, FORWARD, 120);  // Motor B at max speed.
     nextState = READ_LINE;
     break;
   case GO_LEFT:
     driveArdumoto(MOTOR_L, FORWARD, 0);  // Motor A at max speed.
-    driveArdumoto(MOTOR_R, FORWARD, 200);  // Motor B at max speed.
+    driveArdumoto(MOTOR_R, FORWARD, 120);  // Motor B at max speed.
     nextState = READ_LINE;
     break;
   case GO_LEFT_2:
-    driveArdumoto(MOTOR_L, REVERSE, 255);  // Motor A at max speed.
-    driveArdumoto(MOTOR_R, FORWARD, 200);  // Motor B at max speed.
+    driveArdumoto(MOTOR_L, REVERSE, 120);  // Motor A at max speed.
+    driveArdumoto(MOTOR_R, FORWARD, 120);  // Motor B at max speed.
     nextState = READ_LINE;
     break;
   case GO_RIGHT:
     driveArdumoto(MOTOR_R, FORWARD, 0);  // Motor B at max speed.
-    driveArdumoto(MOTOR_L, FORWARD, 200);  // Motor A at max speed.
+    driveArdumoto(MOTOR_L, FORWARD, 120);  // Motor A at max speed.
     
     nextState = READ_LINE;
     break;
   case GO_RIGHT_2:
-    driveArdumoto(MOTOR_R, REVERSE, 255);  // Motor B at max speed.
-    driveArdumoto(MOTOR_L, FORWARD, 200);  // Motor A at max speed.
+    driveArdumoto(MOTOR_R, REVERSE, 120);  // Motor B at max speed.
+    driveArdumoto(MOTOR_L, FORWARD, 120);  // Motor A at max speed.
     
     nextState = READ_LINE;
     break;
@@ -193,6 +201,26 @@ void loop() {
   }
   state = nextState;
 }
+
+/*else {
+    driveArdumoto(MOTOR_R, REVERSE, 200);  // Motor B at max speed.
+    driveArdumoto(MOTOR_L, FORWARD, 200);  // Motor A at max speed.
+    delay(500);
+    driveArdumoto(MOTOR_L, FORWARD, 200);  // Motor A at max speed.
+    driveArdumoto(MOTOR_R, FORWARD, 200);  // Motor B at max speed.
+    delay(1000);
+    driveArdumoto(MOTOR_L, REVERSE, 200);  // Motor A at max speed.
+    driveArdumoto(MOTOR_R, FORWARD, 200);  // Motor B at max speed.
+    delay(500);
+    driveArdumoto(MOTOR_L, FORWARD, 200);  // Motor A at max speed.
+    driveArdumoto(MOTOR_R, FORWARD, 200);  // Motor B at max speed.
+    delay(500);
+    driveArdumoto(MOTOR_L, FORWARD, 0);  // Motor A at max speed.
+    driveArdumoto(MOTOR_R, FORWARD, 200);  // Motor B at max speed.
+    delay(500);
+    driveArdumoto(MOTOR_L, FORWARD, 200);  // Motor A at max speed.
+    driveArdumoto(MOTOR_R, FORWARD, 200);  // Motor B at max speed.
+*/
 
 // STUFF FROM THE ARDUMOTO DRIVER SETUP
 
