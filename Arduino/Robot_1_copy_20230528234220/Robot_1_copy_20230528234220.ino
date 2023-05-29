@@ -88,7 +88,7 @@ void setup()
 }
 
 void loop() {
- //Get the data from the sensor bar and load it into the class members
+ /*Get the data from the sensor bar and load it into the class members
   uint8_t rawValue = mySensorBar.getRaw();
   
   //Print the binary value to the serial buffer.
@@ -116,7 +116,7 @@ void loop() {
   Serial.println("");
   delay(300);
   //Wait 2/3 of a second
- 
+ */
 
 
   uint8_t nextState = state;
