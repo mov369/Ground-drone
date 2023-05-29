@@ -88,6 +88,36 @@ void setup()
 }
 
 void loop() {
+ //Get the data from the sensor bar and load it into the class members
+  uint8_t rawValue = mySensorBar.getRaw();
+  
+  //Print the binary value to the serial buffer.
+  Serial.print("Bin value of input: ");
+  for( int i = 7; i >= 0; i-- )
+  {
+    Serial.print((rawValue >> i) & 0x01);
+  }
+  Serial.println("b");
+
+  //Print the hex value to the serial buffer.  
+  Serial.print("Hex value of bar: 0x");
+  if(rawValue < 0x10) //Serial.print( , HEX) doesn't pad zeros. Do it here
+  {
+	  //Pad a 0;
+	  Serial.print("0");
+  }
+  Serial.println(rawValue, HEX);
+  
+  //Print the position and density quantities
+  Serial.print("Position (-127 to 127): ");
+  Serial.println(mySensorBar.getPosition());
+  Serial.print("Density, bits detected (of 8): ");
+  Serial.println(mySensorBar.getDensity());
+  Serial.println("");
+  delay(300);
+  //Wait 2/3 of a second
+ 
+
 
   uint8_t nextState = state;
   switch (state) {
@@ -105,19 +135,19 @@ void loop() {
     if( mySensorBar.getDensity() > 0 )
     {
       nextState = GO_FORWARD;
-      if( mySensorBar.getPosition() < -50 && mySensorBar.getPosition()> -111)
+      if( mySensorBar.getPosition() < -50 && mySensorBar.getPosition()> -97)
       {
         nextState = GO_LEFT;
       }
-      if( mySensorBar.getPosition() < -111)
+      if( mySensorBar.getPosition() < -110)
       {
         nextState = GO_LEFT_2;
       }
-      if( mySensorBar.getPosition() > 50 && mySensorBar.getPosition() < 111 )
+      if( mySensorBar.getPosition() > 50 && mySensorBar.getPosition() < 97 )
       {
         nextState = GO_RIGHT;
       }
-      if( mySensorBar.getPosition() > 111 )
+      if( mySensorBar.getPosition() > 110 )
       {
         nextState = GO_RIGHT_2;
       }
@@ -128,29 +158,29 @@ void loop() {
     }
     break;
   case GO_FORWARD:
-    driveArdumoto(MOTOR_L, FORWARD, 255);  // Motor A at max speed.
-    driveArdumoto(MOTOR_R, FORWARD, 255);  // Motor B at max speed.
+    driveArdumoto(MOTOR_L, FORWARD, 200);  // Motor A at max speed.
+    driveArdumoto(MOTOR_R, FORWARD, 200);  // Motor B at max speed.
     nextState = READ_LINE;
     break;
   case GO_LEFT:
     driveArdumoto(MOTOR_L, FORWARD, 0);  // Motor A at max speed.
-    driveArdumoto(MOTOR_R, FORWARD, 255);  // Motor B at max speed.
+    driveArdumoto(MOTOR_R, FORWARD, 200);  // Motor B at max speed.
     nextState = READ_LINE;
     break;
   case GO_LEFT_2:
     driveArdumoto(MOTOR_L, REVERSE, 255);  // Motor A at max speed.
-    driveArdumoto(MOTOR_R, FORWARD, 255);  // Motor B at max speed.
+    driveArdumoto(MOTOR_R, FORWARD, 200);  // Motor B at max speed.
     nextState = READ_LINE;
     break;
   case GO_RIGHT:
     driveArdumoto(MOTOR_R, FORWARD, 0);  // Motor B at max speed.
-    driveArdumoto(MOTOR_L, FORWARD, 255);  // Motor A at max speed.
+    driveArdumoto(MOTOR_L, FORWARD, 200);  // Motor A at max speed.
     
     nextState = READ_LINE;
     break;
   case GO_RIGHT_2:
     driveArdumoto(MOTOR_R, REVERSE, 255);  // Motor B at max speed.
-    driveArdumoto(MOTOR_L, FORWARD, 255);  // Motor A at max speed.
+    driveArdumoto(MOTOR_L, FORWARD, 200);  // Motor A at max speed.
     
     nextState = READ_LINE;
     break;
@@ -205,3 +235,6 @@ void setupArdumoto()
   digitalWrite(DIRL, LOW);
   digitalWrite(DIRR, LOW);
 }
+
+
+//Need to add a function based on the last read to continue turning in the direction it did until it finds the line again.
