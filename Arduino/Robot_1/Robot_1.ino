@@ -91,8 +91,7 @@ void setup()
 }
 
 void loop() {
-   
-    delay(500);
+  /* 
   //Get the data from the sensor bar and load it into the class members
   uint8_t rawValue = mySensorBar.getRaw();
   
@@ -120,10 +119,8 @@ void loop() {
   Serial.println(mySensorBar.getDensity());
   Serial.println("");
   delay(500);
-  //Wait 2/3 of a second
+  */
  
-
-
   uint8_t nextState = state;
   switch (state) {
   case IDLE_STATE:
@@ -195,10 +192,8 @@ void loop() {
     break;
   }
   state = nextState;
-  //delay(100);
-
-
 }
+
 // STUFF FROM THE ARDUMOTO DRIVER SETUP
 
 // driveArdumoto([motor], [direction], [speed]) -- Drive [motor] 
