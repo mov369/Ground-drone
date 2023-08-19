@@ -4,18 +4,15 @@
 
 const byte triggerPin = 13;
 const byte echoPin = 12;
-//UltraSonicDistanceSensor distanceSensor(triggerPin, echoPin);
+UltraSonicDistanceSensor distanceSensor(triggerPin, echoPin);
 
-// Uncomment one of the four lines to match your SX1509's address
-//  pin selects. SX1509 breakout defaults to [0:0] (0x3E).
-const uint8_t SX1509_ADDRESS = 0x3E;  // SX1509 I2C address (00)
+//Uncomment one of the four lines to match your SX1509's address
+//pin selects. SX1509 breakout defaults to [0:0] (0x3E).
+//const uint8_t SX1509_ADDRESS = 0x3E;  // SX1509 I2C address (00)
 //const byte SX1509_ADDRESS = 0x3F;  // SX1509 I2C address (01)
 //const byte SX1509_ADDRESS = 0x70;  // SX1509 I2C address (10)
 //const byte SX1509_ADDRESS = 0x71;  // SX1509 I2C address (11)
-
-SensorBar mySensorBar(SX1509_ADDRESS);
-
-
+//SensorBar mySensorBar(SX1509_ADDRESS);
 // based on SparkFun MostBasicFollower code
 // Define the states that the decision making machines uses:
 #define IDLE_STATE 0
@@ -40,69 +37,44 @@ SensorBar mySensorBar(SX1509_ADDRESS);
 #define PWML 3  // PWM control (speed) for motor A // was int Lmotor = 5;
 #define DIRR 4 // Direction control for motor B // was int Rdir = 7;
 #define PWMR 11 // PWM control (speed) for motor B // was int Rmotor = 6;
-
-
-
 uint8_t state;
 
 void setup() 
 {
   setupArdumoto();
   Serial.begin(9600);  // start serial for output
+  Serial.println();
   Serial.println("Program started.");
   Serial.println();
-
-  //Default: the IR will only be turned on during reads.
-  mySensorBar.setBarStrobe();
-  //Other option: Command to run all the time
-  //mySensorBar.clearBarStrobe();
-
-  //Default: dark on light
-  //mySensorBar.clearInvertBits();
-  //Other option: light line on dark
-  mySensorBar.setInvertBits();
-  
-  //Don't forget to call .begin() to get the bar ready.  This configures HW.
-  uint8_t returnStatus = mySensorBar.begin();
- 
-  if(returnStatus){
-	  Serial.println("sx1509 IC communication OK");}
-  else{
-	  Serial.println("sx1509 IC communication FAILED!");}
-  Serial.println();
-  mySensorBar.begin();
 }
-
-
-
 
 void loop() {
   //Get the data from the sensor bar and load it into the class members
-  uint8_t rawValue = mySensorBar.getRaw();
+  //uint8_t rawValue = mySensorBar.getRaw();
   //Print the binary value to the serial buffer.
-  Serial.print("Bin value of input: ");
-  for( int i = 7; i >= 0; i-- )
-  {
-    Serial.print((rawValue >> i) & 0x01);
-  }
-  Serial.println("b");
+  //Serial.print("Bin value of input: ");
+  //for( int i = 7; i >= 0; i-- )
+  //{
+  //  Serial.print((rawValue >> i) & 0x01);
+  //}
+  //Serial.println("b");
 
   //Print the hex value to the serial buffer.  
-  Serial.print("Hex value of bar: 0x");
-  if(rawValue < 0x10) //Serial.print( , HEX) doesn't pad zeros. Do it here
-  {
-	  //Pad a 0;
-	  Serial.print("0");
-  }
-  Serial.println(rawValue, HEX);
+  //Serial.print("Hex value of bar: 0x");
+  //if(rawValue < 0x10) //Serial.print( , HEX) doesn't pad zeros. Do it here
+  //{
+	//Pad a 0;
+	//  Serial.print("0");
+  //}
+  //Serial.println(rawValue, HEX);
   
   //Print the position and density quantities
-  Serial.print("Position (-127 to 127): ");
-  Serial.println(mySensorBar.getPosition());
-  Serial.print("Density, bits detected (of 8): ");
-  Serial.println(mySensorBar.getDensity());
-  Serial.println("");
-  delay(500);
+  //Serial.print("Position (-127 to 127): ");
+  //Serial.println(mySensorBar.getPosition());
+  //Serial.print("Density, bits detected (of 8): ");
+  //Serial.println(mySensorBar.getDensity());
+  //Serial.println("");
+  //delay(500);
   //float distance = distanceSensor.measureDistanceCm();
   uint8_t nextState = state;
   switch (state) {
@@ -117,31 +89,31 @@ void loop() {
     //  nextState = IDLE_STATE;
     //   break;
     //}
-    if( mySensorBar.getDensity() > 0 )
-    {
+    //if( mySensorBar.getDensity() > 0 )
+    //{
       nextState = IDLE_STATE;//GO_FORWARD;
-      if( mySensorBar.getPosition() < -50 && mySensorBar.getPosition()> -97)
-      {
+      //if( mySensorBar.getPosition() < -50 && mySensorBar.getPosition()> -97)
+    //  {
         nextState = IDLE_STATE;//GO_LEFT;
-      }
-      if( mySensorBar.getPosition() < -110)
-      {
+    //  }
+      //if( mySensorBar.getPosition() < -110)
+    //  {
         nextState = IDLE_STATE;//GO_LEFT_2;
-      }
-      if( mySensorBar.getPosition() > 50 && mySensorBar.getPosition() < 97 )
-      {
+    //  }
+      //if( mySensorBar.getPosition() > 50 && mySensorBar.getPosition() < 97 )
+    //  {
         nextState = IDLE_STATE;//GO_RIGHT;
-      }
-      if( mySensorBar.getPosition() > 110 )
-      {
+    //  }
+      //if( mySensorBar.getPosition() > 110 )
+    //  {
         nextState = IDLE_STATE;//GO_RIGHT_2;
-      }
-    }
-    else
-    {
-      nextState = IDLE_STATE;
-    }
-    break;
+    //  }
+    //}
+    //else
+    //{
+    //  nextState = IDLE_STATE;
+    //}
+    //break;
 
 
   case GO_FORWARD:
@@ -199,8 +171,9 @@ void loop() {
     driveArdumoto(MOTOR_R, FORWARD, 200);  // Motor B at max speed.
 */
 
-// STUFF FROM THE ARDUMOTO DRIVER SETUP
 
+
+// STUFF FROM THE ARDUMOTO DRIVER SETUP
 // driveArdumoto([motor], [direction], [speed]) -- Drive [motor] 
 // (0 for Left, 1 for Right) in [direction] (0 or 1) at a [speed] between 0 and 255. 
 // It will spin until told to stop.
@@ -220,26 +193,21 @@ void driveArdumoto(byte motor, byte dir, byte spd)
 }
 
 // stopArdumoto makes a motor stop
-void stopArdumoto(byte motor)
-{
+void stopArdumoto(byte motor){
   driveArdumoto(motor, 0, 0);
 }
 
-void setupArdumoto()
-{
-   //  Setup the Ardumoto Shield pins.
-   //  All pins should be setup as outputs:
+//  Setup the Ardumoto Shield pins.
+void setupArdumoto(){
+  //All pins should be setup as outputs:
   pinMode(PWML, OUTPUT);
   pinMode(PWMR, OUTPUT);
   pinMode(DIRL, OUTPUT);
   pinMode(DIRR, OUTPUT);
 
-  // Initialize all pins as low:
+  //Initialize all pins as low:
   digitalWrite(PWML, LOW);
   digitalWrite(PWMR, LOW);
   digitalWrite(DIRL, LOW);
   digitalWrite(DIRR, LOW);
 }
-
-
-//Need to add a function based on the last read to continue turning in the direction it did until it finds the line again.
