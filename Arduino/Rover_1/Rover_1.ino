@@ -1,24 +1,6 @@
-//Robot_1 - Line Following, Obstacle Avoiding Robot with PID Controller
-/* ABLB
- * ActoBitty Line Bot 
- *
- * base robot Actobotics ActoBitty:
- * https://www.servocity.com/html/actobitty_2_wheel_robot_kit.html#.VthCuvkrI-U
- * 
- * microcontroller board DFRobot Romeo 2 (has built in motor controller):
- * http://www.dfrobot.com/wiki/index.php/Romeo_V2-All_in_one_Controller_(R3)_(SKU:DFR0225)
- *
- * mount panel for board:
- * http://www.thingiverse.com/thing:1377159
- * 
- * line follower array from Sparkfun:
- * https://github.com/sparkfun/Line_Follower_Array
- *  
- */
-
 #include "Wire.h"              // for I2C
 #include "sensorbar.h"         // needs SparkFun library
-//#include <HCSR04.h>
+#include <HCSR04.h>
 
 const byte triggerPin = 13;
 const byte echoPin = 12;
@@ -66,11 +48,11 @@ uint8_t state;
 void setup() 
 {
   setupArdumoto();
-  //Serial.begin(9600);  // start serial for output
-  //Serial.println("Program started.");
-  //Serial.println();
+  Serial.begin(9600);  // start serial for output
+  Serial.println("Program started.");
+  Serial.println();
 
- //Default: the IR will only be turned on during reads.
+  //Default: the IR will only be turned on during reads.
   mySensorBar.setBarStrobe();
   //Other option: Command to run all the time
   //mySensorBar.clearBarStrobe();
@@ -81,25 +63,22 @@ void setup()
   mySensorBar.setInvertBits();
   
   //Don't forget to call .begin() to get the bar ready.  This configures HW.
-  //uint8_t returnStatus = mySensorBar.begin();
+  uint8_t returnStatus = mySensorBar.begin();
  
-  //if(returnStatus)
-  //{
-	//  Serial.println("sx1509 IC communication OK");
-  //}
-  //else
-  //{
-	//  Serial.println("sx1509 IC communication FAILED!");
-  //}
-  //Serial.println();
+  if(returnStatus){
+	  Serial.println("sx1509 IC communication OK");}
+  else{
+	  Serial.println("sx1509 IC communication FAILED!");}
+  Serial.println();
   mySensorBar.begin();
 }
 
+
+
+
 void loop() {
-  /* 
   //Get the data from the sensor bar and load it into the class members
   uint8_t rawValue = mySensorBar.getRaw();
-  
   //Print the binary value to the serial buffer.
   Serial.print("Bin value of input: ");
   for( int i = 7; i >= 0; i-- )
@@ -124,7 +103,6 @@ void loop() {
   Serial.println(mySensorBar.getDensity());
   Serial.println("");
   delay(500);
-  */
   //float distance = distanceSensor.measureDistanceCm();
   uint8_t nextState = state;
   switch (state) {
@@ -141,22 +119,22 @@ void loop() {
     //}
     if( mySensorBar.getDensity() > 0 )
     {
-      nextState = GO_FORWARD;
+      nextState = IDLE_STATE;//GO_FORWARD;
       if( mySensorBar.getPosition() < -50 && mySensorBar.getPosition()> -97)
       {
-        nextState = GO_LEFT;
+        nextState = IDLE_STATE;//GO_LEFT;
       }
       if( mySensorBar.getPosition() < -110)
       {
-        nextState = GO_LEFT_2;
+        nextState = IDLE_STATE;//GO_LEFT_2;
       }
       if( mySensorBar.getPosition() > 50 && mySensorBar.getPosition() < 97 )
       {
-        nextState = GO_RIGHT;
+        nextState = IDLE_STATE;//GO_RIGHT;
       }
       if( mySensorBar.getPosition() > 110 )
       {
-        nextState = GO_RIGHT_2;
+        nextState = IDLE_STATE;//GO_RIGHT_2;
       }
     }
     else
