@@ -1,4 +1,17 @@
-# Rover System Notes
+Robot_1 is household chores helper.
+
+Parts that will need to be present:
+
+-Microcontroller
+-ESC
+-Motors (driveline & suction impeller, probably Centrifugal Impeller/Turbine/Compressor - see Dyson)
+-Battery
+-Charging station
+-Minimalistic HMI
+
+########################################################################################################################################################################################################################################################################################################################################################################################
+
+Rover System Notes
 
 Battery Pack:
 18650
