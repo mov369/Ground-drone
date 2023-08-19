@@ -49,33 +49,15 @@ void setup()
 }
 
 void loop() {
+  Serial.println(distanceSensor.measureDistanceCm());
+  delay(500);
   //Get the data from the sensor bar and load it into the class members
   //uint8_t rawValue = mySensorBar.getRaw();
-  //Print the binary value to the serial buffer.
-  //Serial.print("Bin value of input: ");
-  //for( int i = 7; i >= 0; i-- )
-  //{
-  //  Serial.print((rawValue >> i) & 0x01);
-  //}
-  //Serial.println("b");
-
-  //Print the hex value to the serial buffer.  
-  //Serial.print("Hex value of bar: 0x");
-  //if(rawValue < 0x10) //Serial.print( , HEX) doesn't pad zeros. Do it here
-  //{
-	//Pad a 0;
-	//  Serial.print("0");
-  //}
-  //Serial.println(rawValue, HEX);
   
-  //Print the position and density quantities
-  //Serial.print("Position (-127 to 127): ");
-  //Serial.println(mySensorBar.getPosition());
-  //Serial.print("Density, bits detected (of 8): ");
-  //Serial.println(mySensorBar.getDensity());
-  //Serial.println("");
-  //delay(500);
-  //float distance = distanceSensor.measureDistanceCm();
+  
+  float distance = distanceSensor.measureDistanceCm();
+  Serial.print(distance);
+  Serial.println();
   uint8_t nextState = state;
   switch (state) {
   case IDLE_STATE:
@@ -84,37 +66,35 @@ void loop() {
     nextState = READ_LINE;
     break;
   case READ_LINE:
-    //if( mySensorBar.getDensity() == 0)
-    //{
-    //  nextState = IDLE_STATE;
-    //   break;
-    //}
-    //if( mySensorBar.getDensity() > 0 )
-    //{
-      nextState = IDLE_STATE;//GO_FORWARD;
+    if(distance == 0){
+    nextState = IDLE_STATE;
+    break;
+    }
+    if(distance < 10){
+      nextState = GO_FORWARD;
+      delay(1000);
       //if( mySensorBar.getPosition() < -50 && mySensorBar.getPosition()> -97)
-    //  {
-        nextState = IDLE_STATE;//GO_LEFT;
-    //  }
+      //  {
+      //  nextState = IDLE_STATE;//GO_LEFT;
+      //  }
       //if( mySensorBar.getPosition() < -110)
-    //  {
-        nextState = IDLE_STATE;//GO_LEFT_2;
-    //  }
+      //  {
+      //  nextState = IDLE_STATE;//GO_LEFT_2;
+      //  }
       //if( mySensorBar.getPosition() > 50 && mySensorBar.getPosition() < 97 )
-    //  {
-        nextState = IDLE_STATE;//GO_RIGHT;
-    //  }
+      //  {
+      //  nextState = IDLE_STATE;//GO_RIGHT;
+      //  }
       //if( mySensorBar.getPosition() > 110 )
-    //  {
-        nextState = IDLE_STATE;//GO_RIGHT_2;
-    //  }
-    //}
-    //else
-    //{
-    //  nextState = IDLE_STATE;
-    //}
-    //break;
-
+      //  {
+      //  nextState = IDLE_STATE;//GO_RIGHT_2;
+      //  }
+      }
+      else{
+        nextState = IDLE_STATE;
+        }
+      break;
+    
 
   case GO_FORWARD:
     driveArdumoto(MOTOR_L, FORWARD, 150);  // Motor A at max speed.
@@ -149,7 +129,7 @@ void loop() {
     break;
   }
   state = nextState;
-}
+  }
 
 /*else {
     driveArdumoto(MOTOR_R, REVERSE, 200);  // Motor B at max speed.
@@ -178,8 +158,7 @@ void loop() {
 // (0 for Left, 1 for Right) in [direction] (0 or 1) at a [speed] between 0 and 255. 
 // It will spin until told to stop.
 // driveArdumoto drives 'motor' in 'dir' direction at 'spd' speed
-void driveArdumoto(byte motor, byte dir, byte spd)
-{
+void driveArdumoto(byte motor, byte dir, byte spd){
   if (motor == MOTOR_L)
   {
     digitalWrite(DIRL, dir);
