@@ -42,25 +42,49 @@ UltraSonicDistanceSensor distanceSensor(triggerPin, echoPin);
 #define PWMR 11 // PWM control (speed) for motor B // was int Rmotor = 6;
 uint8_t state;
 
-void setup() 
-{
+void setup() {
   setupArdumoto();
   Serial.begin(9600);  // start serial for output
-  Serial.println();
-  Serial.println("Program started.");
-  Serial.println();
+  pinMode(triggerPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(btriggerPin, OUTPUT);
+  pinMode(bechoPin, INPUT);
+  //pinMode(LED, OUTPUT);
+  //pinMode(LED2, OUTPUT);
 }
 
 void loop() {
   Serial.println(distanceSensor.measureDistanceCm());
   delay(1500);
-  //Get the data from the sensor bar and load it into the class members
-  //uint8_t rawValue = mySensorBar.getRaw();
-  
-  
   float distance = distanceSensor.measureDistanceCm();
   //Serial.print(distance);
   //Serial.println();
+  digitalWrite(triggerPin,LOW);
+  delayMicroseconds(2);
+  digitalWrite(btriggerPin,HIGH);
+  delayMicroseconds(2);
+  digitalWrite(triggerPin,LOW);
+
+  long timedelay = pulseIn(echoPin,HIGH);
+  int distance1 = 0.0343 * (timedelay/2);
+  Serial.print("Sensor 1 : ");
+  Serial.println(distance1);
+
+  delayMicroseconds(2);
+
+  digitalWrite(btriggerPin,LOW);
+  delayMicroseconds(2);
+  digitalWrite(btriggerPin,HIGH);
+  delayMicroseconds(2);
+  digitalWrite(btriggerPin,LOW);
+
+  long td = pulseIn(bechoPin,HIGH);
+  int distance2 = 0.0343 * (td/2);
+
+  Serial.print("Sensor 2 : ");
+  Serial.println(distance2);
+  
+
   uint8_t nextState = state;
   switch (state) {
   case IDLE_STATE:
