@@ -4,6 +4,9 @@
 
 const byte triggerPin = 13;
 const byte echoPin = 12;
+const byte btriggerPin = 8;
+const byte bechoPin = 9;
+
 UltraSonicDistanceSensor distanceSensor(triggerPin, echoPin);
 
 //Uncomment one of the four lines to match your SX1509's address
@@ -50,14 +53,14 @@ void setup()
 
 void loop() {
   Serial.println(distanceSensor.measureDistanceCm());
-  delay(500);
+  delay(1500);
   //Get the data from the sensor bar and load it into the class members
   //uint8_t rawValue = mySensorBar.getRaw();
   
   
   float distance = distanceSensor.measureDistanceCm();
-  Serial.print(distance);
-  Serial.println();
+  //Serial.print(distance);
+  //Serial.println();
   uint8_t nextState = state;
   switch (state) {
   case IDLE_STATE:
