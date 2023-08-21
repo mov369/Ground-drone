@@ -4,8 +4,8 @@
 
 const byte triggerPin = 13;
 const byte echoPin = 12;
-const byte btriggerPin = 8;
-const byte bechoPin = 9;
+const byte btriggerPin = 9;
+const byte bechoPin = 8;
 
 UltraSonicDistanceSensor distanceSensor(triggerPin, echoPin);
 
@@ -54,35 +54,58 @@ void setup() {
 }
 
 void loop() {
-  Serial.println(distanceSensor.measureDistanceCm());
-  delay(1500);
-  float distance = distanceSensor.measureDistanceCm();
+  //Serial.println(distanceSensor.measureDistanceCm());
+  //delay(1500);
+  //float distance = distanceSensor.measureDistanceCm();
   //Serial.print(distance);
   //Serial.println();
-  digitalWrite(triggerPin,LOW);
-  delayMicroseconds(2);
-  digitalWrite(btriggerPin,HIGH);
-  delayMicroseconds(2);
-  digitalWrite(triggerPin,LOW);
 
-  long timedelay = pulseIn(echoPin,HIGH);
-  int distance1 = 0.0343 * (timedelay/2);
-  Serial.print("Sensor 1 : ");
-  Serial.println(distance1);
+  int duration, distance;
+  digitalWrite(triggerPin, HIGH);
+  delayMicroseconds(10000);
+  digitalWrite(triggerPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  distance = (duration/2) / 29.1;
 
-  delayMicroseconds(2);
+  int bduration, bdistance;
+  digitalWrite(btriggerPin, HIGH);
+  delayMicroseconds(10000);
+  digitalWrite(btriggerPin, LOW);
+  bduration = pulseIn(bechoPin, HIGH);
+  bdistance = (bduration/2) / 29.1;
 
-  digitalWrite(btriggerPin,LOW);
-  delayMicroseconds(2);
-  digitalWrite(btriggerPin,HIGH);
-  delayMicroseconds(2);
-  digitalWrite(btriggerPin,LOW);
+  Serial.print("Front Ultrasound: ");
+  Serial.print(distance);
+  Serial.println(" cm");
 
-  long td = pulseIn(bechoPin,HIGH);
-  int distance2 = 0.0343 * (td/2);
+  Serial.print("Side Ultrasound: ");
+  Serial.print(bdistance);
+  Serial.println(" cm");
 
-  Serial.print("Sensor 2 : ");
-  Serial.println(distance2);
+  //digitalWrite(triggerPin,LOW);
+  //delayMicroseconds(2);
+  //digitalWrite(btriggerPin,HIGH);
+  //delayMicroseconds(2);
+  //digitalWrite(triggerPin,LOW);
+
+  //long timedelay = pulseIn(echoPin,HIGH);
+  //int distance1 = 0.0343 * (timedelay/2);
+  //Serial.print("Sensor 1 : ");
+  //Serial.println(distance1);
+
+  //delayMicroseconds(2);
+
+  //digitalWrite(btriggerPin,LOW);
+  //delayMicroseconds(2);
+  //digitalWrite(btriggerPin,HIGH);
+  //delayMicroseconds(2);
+  //digitalWrite(btriggerPin,LOW);
+
+  //long td = pulseIn(bechoPin,HIGH);
+  //int distance2 = 0.0343 * (td/2);
+
+  //Serial.print("Sensor 2 : ");
+  //Serial.println(distance2);
   
 
   uint8_t nextState = state;
