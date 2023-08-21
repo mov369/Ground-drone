@@ -19,7 +19,7 @@ UltraSonicDistanceSensor distanceSensor(triggerPin, echoPin);
 // based on SparkFun MostBasicFollower code
 // Define the states that the decision making machines uses:
 #define IDLE_STATE 0
-#define READ_LINE 1
+#define READ_SENSORS 1
 #define GO_FORWARD 2
 #define GO_LEFT 3
 #define GO_RIGHT 4
@@ -113,16 +113,29 @@ void loop() {
   case IDLE_STATE:
     stopArdumoto(MOTOR_L);  // STOP motor A 
     stopArdumoto(MOTOR_R);  // STOP motor B
-    nextState = READ_LINE;
+    nextState = READ_SENSORS;
     break;
-  case READ_LINE:
-    if(distance == 0){
-    nextState = IDLE_STATE;
-    break;
-    }
-    if(distance < 10){
+  case READ_SENSORS:
+  if( bdistance > 20 )
+      {
+        nextState = GO_LEFT;}
+  if( bdistance < 5 )
+      {
+        nextState = GO_RIGHT;
+      }
+  if(distance > 10 )
+    {
       nextState = GO_FORWARD;
-      delay(1000);
+      
+      }
+      
+    else
+    {
+      nextState = IDLE_STATE;
+    break;}
+    //if(distance < 10){
+     // nextState = GO_FORWARD;
+      //delay(1000);
       //if( mySensorBar.getPosition() < -50 && mySensorBar.getPosition()> -97)
       //  {
       //  nextState = IDLE_STATE;//GO_LEFT;
@@ -139,39 +152,38 @@ void loop() {
       //  {
       //  nextState = IDLE_STATE;//GO_RIGHT_2;
       //  }
-      }
-      else{
-        nextState = IDLE_STATE;
-        }
-      break;
-    
+
+
+
+
+
+
 
   case GO_FORWARD:
     driveArdumoto(MOTOR_L, FORWARD, 150);  // Motor A at max speed.
     driveArdumoto(MOTOR_R, FORWARD, 150);  // Motor B at max speed.
-    nextState = READ_LINE;
+    nextState = READ_SENSORS;
     break;
   case GO_LEFT:
     driveArdumoto(MOTOR_L, FORWARD, 0);  // Motor A at max speed.
     driveArdumoto(MOTOR_R, FORWARD, 150);  // Motor B at max speed.
-    nextState = READ_LINE;
+    nextState = READ_SENSORS;
     break;
   case GO_LEFT_2:
     driveArdumoto(MOTOR_L, REVERSE, 150);  // Motor A at max speed.
     driveArdumoto(MOTOR_R, FORWARD, 150);  // Motor B at max speed.
-    nextState = READ_LINE;
+    nextState = READ_SENSORS;
     break;
   case GO_RIGHT:
     driveArdumoto(MOTOR_R, FORWARD, 0);  // Motor B at max speed.
     driveArdumoto(MOTOR_L, FORWARD, 150);  // Motor A at max speed.
     
-    nextState = READ_LINE;
+    nextState = READ_SENSORS;
     break;
   case GO_RIGHT_2:
     driveArdumoto(MOTOR_R, REVERSE, 150);  // Motor B at max speed.
     driveArdumoto(MOTOR_L, FORWARD, 150);  // Motor A at max speed.
-    
-    nextState = READ_LINE;
+    nextState = READ_SENSORS;
     break;
   default:
     stopArdumoto(MOTOR_L);  // STOP motor A 
@@ -179,7 +191,8 @@ void loop() {
     break;
   }
   state = nextState;
-  }
+  
+}
 
 /*else {
     driveArdumoto(MOTOR_R, REVERSE, 200);  // Motor B at max speed.
@@ -200,7 +213,7 @@ void loop() {
     driveArdumoto(MOTOR_L, FORWARD, 200);  // Motor A at max speed.
     driveArdumoto(MOTOR_R, FORWARD, 200);  // Motor B at max speed.
 */
-
+  
 
 
 // STUFF FROM THE ARDUMOTO DRIVER SETUP
